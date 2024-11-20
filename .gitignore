@@ -1,0 +1,8 @@
+data/*
+results/selected-model/ml_signal.scv
+results/selected-model/selected_model.pkl
+results/strategy/strategy_results.csv
+*.pyc
+__pycache__/
+.DS_Store
+.venv/
