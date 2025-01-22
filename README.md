@@ -11,7 +11,7 @@ Before starting, ensure you have:
 ### Setting Up the Environment
 1. Clone the Repository:
 ``` 
-git clone https://01.kood.tech/git/dvorontso/sp500-strategies
+git clone https://github.com/Daniila-vv/sp500-strategies.git
 ```
 2. Create a Virtual Environment 
 ```

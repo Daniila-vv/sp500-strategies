@@ -2,46 +2,46 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import joblib
 
-# Пути
+# Paths
 ml_metrics_path = "../results/cross-validation/ml_metrics_train.csv"
 metric_train_path = "../results/cross-validation/metric_train.csv"
 metric_plot_path = "../results/cross-validation/metric_train.png"
 model_path = "../results/selected-model/selected_model.pkl"
 feature_importance_path = "../results/cross-validation/top_10_feature_importance.csv"
 
-# Создание metric_train.csv
+# Creation metric_train.csv
 def create_metric_train():
     try:
-        # Загрузка метрик
+        # Loading metrics
         results = pd.read_csv(ml_metrics_path)
 
-        # Создание нового файла metric_train.csv
+        # Create a new file metric_train.csv
         results.to_csv(metric_train_path, index=False)
         print(f"Файл {metric_train_path} создан.")
     except FileNotFoundError:
         print(f"Не удалось найти {ml_metrics_path}. Проверьте путь и попробуйте снова.")
 
-# Создание графика метрик metric_train.png
+# Creating a metrics graph metric_train.png
 def plot_metric_train():
     try:
-        # Загрузка данных
+        # Loading data
         results = pd.read_csv(ml_metrics_path)
 
-        # Построение графика метрик
+        # Plotting a metrics graph
         plt.figure(figsize=(10, 6))
 
-        # График AUC
+        # AUC Graph
         plt.plot(results["mean_train_AUC"], label="Train AUC", marker="o")
         plt.plot(results["mean_test_AUC"], label="Validation AUC", marker="x")
 
-        # Оформление графика
+        # Design of the schedule
         plt.xlabel("Hyperparameter Combinations")
         plt.ylabel("AUC")
         plt.title("AUC Scores for Train and Validation")
         plt.legend()
         plt.grid(True)
 
-        # Сохранение графика
+        # Saving the schedule
         plt.savefig(metric_plot_path)
         plt.close()
         print(f"График метрик сохранен в {metric_plot_path}.")
@@ -50,19 +50,19 @@ def plot_metric_train():
     except KeyError as e:
         print(f"Ошибка: отсутствует ключ {e} в данных метрик.")
 
-# Создание top_10_feature_importance.csv
+# Create top_10_feature_importance.csv
 def create_feature_importance():
     try:
-        # Загрузка модели
+       # Loading the model
         best_model = joblib.load(model_path)
 
-        # Создание DataFrame с важностью признаков
+        # Create a DataFrame with Feature Importance
         feature_importance = pd.DataFrame({
             "Feature": ["bb_high", "bb_low", "rsi", "macd", "macd_signal"],
             "Importance": best_model.feature_importances_
         }).sort_values(by="Importance", ascending=False)
 
-        # Сохранение в файл
+        # Saving to file
         feature_importance.to_csv(feature_importance_path, index=False)
         print(f"Файл {feature_importance_path} создан.")
     except FileNotFoundError:
@@ -70,7 +70,7 @@ def create_feature_importance():
     except AttributeError:
         print("Ошибка: модель не содержит важности признаков.")
 
-# Основной запуск
+# Main run
 if __name__ == "__main__":
     create_metric_train()
     plot_metric_train()

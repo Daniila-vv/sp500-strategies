@@ -6,7 +6,7 @@ import joblib
 import os
 import numpy as np
 
-# Пути
+# Paths
 train_data_path = "../data/train_stocks_with_features.csv"
 cv_metric_path = "../results/cross-validation/ml_metrics_train.csv"
 model_path = "../results/selected-model/selected_model.pkl"
@@ -14,25 +14,25 @@ params_path = "../results/selected-model/selected_model.txt"
 blocking_plot_path = "../results/cross-validation/blocking_plot.png"
 time_series_plot_path = "../results/cross-validation/time_series_plot.png"
 
-# Создание директорий
+# Creating directories
 os.makedirs("../results/cross-validation", exist_ok=True)
 os.makedirs("../results/selected-model", exist_ok=True)
 
-# Загрузка данных
+# Loading data
 try:
     train_data = pd.read_csv(train_data_path)
 except FileNotFoundError as e:
     raise FileNotFoundError(f"Train data file not found: {e}")
 
-# Проверка данных
+# Data verification
 if train_data.isnull().sum().sum() > 0:
     print("Warning: Missing values detected in train data.")
 
-# Выбор признаков и целевой переменной
+# Selection of features and target variable
 X_train = train_data[["bb_high", "bb_low", "rsi", "macd", "macd_signal"]]
 y_train = train_data["target"]
 
-# Функция для построения графиков фолдов
+# Function for plotting fold graphs
 def plot_folds(cv, X, y, save_path, title):
     plt.figure(figsize=(10, 6))
     for fold_idx, (train_idx, val_idx) in enumerate(cv.split(X, y)):
@@ -54,7 +54,7 @@ plot_folds(blocking_cv, X_train, y_train, blocking_plot_path, "Blocking Cross-va
 tscv = TimeSeriesSplit(n_splits=10)
 plot_folds(tscv, X_train, y_train, time_series_plot_path, "Time Series Cross-validation Folds")
 
-# Модель и сетка гиперпараметров
+# Model and hyperparameter grid
 model = GradientBoostingClassifier()
 param_grid = {
     "n_estimators": [100, 200],
@@ -76,16 +76,16 @@ grid_search = GridSearchCV(
     n_jobs=-1
 )
 
-# Обучение модели
+# Model training
 print("Starting Grid Search...")
 grid_search.fit(X_train, y_train)
 
-# Сохранение лучшей модели
+# Keeping the best model
 joblib.dump(grid_search.best_estimator_, model_path)
 with open(params_path, "w") as f:
     f.write(str(grid_search.best_params_))
 
-# Сохранение метрик
+# Saving metrics
 results = pd.DataFrame(grid_search.cv_results_)
 results.to_csv(cv_metric_path, index=False)
 
